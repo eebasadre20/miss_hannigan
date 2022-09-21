@@ -5,14 +5,18 @@ module MissHannigan
     def has_many(name, scope = nil, **options, &extension)
       nullify_then_purge = detect_nullify_then_purge(options)
       super.tap do |reflection|
-        connect_nullify_then_purge(reflection, name) if nullify_then_purge
+        if nullify_then_purge && ActiveRecord::Base.connection.tables.include?(name.to_s)
+          connect_nullify_then_purge(reflection, name)
+        end
       end
     end
 
     def has_one(name, scope = nil, **options, &extension)
       nullify_then_purge = detect_nullify_then_purge(options)
       super.tap do |reflection|
-        connect_nullify_then_purge(reflection, name) if nullify_then_purge
+        if nullify_then_purge && ActiveRecord::Base.connection.tables.include?(name.to_s)
+          connect_nullify_then_purge(reflection, name)
+        end
       end
     end
 
